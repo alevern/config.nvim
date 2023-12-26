@@ -35,7 +35,7 @@ are first encountering a few different constructs in your nvim config.
 I hope you enjoy your Neovim journey,
 - TJ
 
-P.S. You can delete this when you're done too. It's your config now :)
+P.S. { You can delete } this when you're done too. It's your config now :)
 --]]
 
 -- Set <space> as the leader key
@@ -94,7 +94,12 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { {"nvim-lua/plenary.nvim"} }
+  },
+{ 'echasnovski/mini.nvim', version = false },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -257,7 +262,7 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
+  require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -351,6 +356,7 @@ require('telescope').setup {
   },
 }
 
+
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
@@ -424,7 +430,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'c', 'cpp', 'go', 'html', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -486,6 +492,48 @@ vim.defer_fn(function()
     },
   }
 end, 0)
+
+
+-- [[ Configure Mini.surround ]]
+require('mini.surround').setup()
+
+
+-- [[ Configure Harpoon ]]
+local harpoon = require('harpoon')
+harpoon:setup({})
+
+-- basic telescope configuration
+local conf = require("telescope.config").values
+local function toggle_telescope(harpoon_files)
+    local file_paths = {}
+    for _, item in ipairs(harpoon_files.items) do
+        table.insert(file_paths, item.value)
+    end
+
+    require("telescope.pickers").new({}, {
+        prompt_title = "Harpoon",
+        finder = require("telescope.finders").new_table({
+            results = file_paths,
+        }),
+        previewer = conf.file_previewer({}),
+        sorter = conf.generic_sorter({}),
+    }):find()
+end
+
+-- Harpoon keymaps
+vim.keymap.set("n", "<M-a>", function() harpoon:list():append() end,{desc = "Harpoon: Append File"})
+vim.keymap.set("n", "<M-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, {desc = "Harpoon: Open Window"})
+
+vim.keymap.set("n", "<M-h>", function() harpoon:list():select(1) end, {desc = "Harpoon: Goto 1"})
+vim.keymap.set("n", "<M-j>", function() harpoon:list():select(2) end, {desc = "Harpoon: Goto 2"})
+vim.keymap.set("n", "<M-k>", function() harpoon:list():select(3) end, {desc = "Harpoon: Goto 3"})
+vim.keymap.set("n", "<M-l>", function() harpoon:list():select(4) end, {desc = "Harpoon: Goto 4"})
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", "<M-p>", function() harpoon:list():prev() end, {desc = "Harpoon: Previous"})
+vim.keymap.set("n", "<M-n>", function() harpoon:list():next() end, {desc = "Harpoon: Next"})
+vim.keymap.set("n", "<M-S-e>", function() toggle_telescope(harpoon:list()) end,
+    { desc = "Harpoon: Open Telescope window" })
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
