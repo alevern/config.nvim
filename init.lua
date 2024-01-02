@@ -1,5 +1,4 @@
 --[[
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -35,7 +34,7 @@ are first encountering a few different constructs in your nvim config.
 I hope you enjoy your Neovim journey,
 - TJ
 
-P.S. { You can delete } this when you're done too. It's your config now :)
+P.S. You can delete this when you're done too. It's your config now :)
 --]]
 
 -- Set <space> as the leader key
@@ -88,18 +87,12 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
   },
-  {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { {"nvim-lua/plenary.nvim"} }
-  },
-{ 'echasnovski/mini.nvim', version = false },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -118,7 +111,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -196,13 +189,16 @@ require('lazy').setup({
 
   {
     -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    'rose-pine/neovim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      require('rose-pine').setup({
+        --- @usage 'auto'|'main'|'moon'|'dawn'
+        variant = 'moon',
+      })
+      vim.cmd.colorscheme 'rose-pine'
     end,
   },
-
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -263,7 +259,7 @@ require('lazy').setup({
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -271,7 +267,7 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {})
 
 -- [[ Setting options ]]
@@ -355,7 +351,6 @@ require('telescope').setup {
     },
   },
 }
-
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
@@ -492,48 +487,6 @@ vim.defer_fn(function()
     },
   }
 end, 0)
-
-
--- [[ Configure Mini.surround ]]
-require('mini.surround').setup()
-
-
--- [[ Configure Harpoon ]]
-local harpoon = require('harpoon')
-harpoon:setup({})
-
--- basic telescope configuration
-local conf = require("telescope.config").values
-local function toggle_telescope(harpoon_files)
-    local file_paths = {}
-    for _, item in ipairs(harpoon_files.items) do
-        table.insert(file_paths, item.value)
-    end
-
-    require("telescope.pickers").new({}, {
-        prompt_title = "Harpoon",
-        finder = require("telescope.finders").new_table({
-            results = file_paths,
-        }),
-        previewer = conf.file_previewer({}),
-        sorter = conf.generic_sorter({}),
-    }):find()
-end
-
--- Harpoon keymaps
-vim.keymap.set("n", "<M-a>", function() harpoon:list():append() end,{desc = "Harpoon: Append File"})
-vim.keymap.set("n", "<M-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, {desc = "Harpoon: Open Window"})
-
-vim.keymap.set("n", "<M-h>", function() harpoon:list():select(1) end, {desc = "Harpoon: Goto 1"})
-vim.keymap.set("n", "<M-j>", function() harpoon:list():select(2) end, {desc = "Harpoon: Goto 2"})
-vim.keymap.set("n", "<M-k>", function() harpoon:list():select(3) end, {desc = "Harpoon: Goto 3"})
-vim.keymap.set("n", "<M-l>", function() harpoon:list():select(4) end, {desc = "Harpoon: Goto 4"})
-
--- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", "<M-p>", function() harpoon:list():prev() end, {desc = "Harpoon: Previous"})
-vim.keymap.set("n", "<M-n>", function() harpoon:list():next() end, {desc = "Harpoon: Next"})
-vim.keymap.set("n", "<M-S-e>", function() toggle_telescope(harpoon:list()) end,
-    { desc = "Harpoon: Open Telescope window" })
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
