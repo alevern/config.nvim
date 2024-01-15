@@ -576,7 +576,8 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'mustache' } },
+  htmx = { filetypes = { 'html', 'mustache' } },
 
   lua_ls = {
     Lua = {
