@@ -13,7 +13,7 @@ return {
   dependencies = {
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
-
+    'nvim-neotest/nvim-nio',
     -- Adds virtual text showing variable values and such
     'theHamsta/nvim-dap-virtual-text',
 
