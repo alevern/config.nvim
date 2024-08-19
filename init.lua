@@ -549,8 +549,9 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- treat mustache template files as html
+-- treat mustache and handlebars template files as html
 vim.treesitter.language.register("html", "mustache")
+vim.treesitter.language.register("html", "handlebars")
 
 -- document existing key chains
 require('which-key').register {
@@ -585,26 +586,45 @@ require('mason-lspconfig').setup()
 --    If you want to override the default filetypes that your language server will attach to you can
 --    define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-  html = { filetypes = { 'html', 'mustache' } },
-  htmx = { filetypes = { 'html', 'mustache' } },
+      -- clangd = {},
+      -- gopls = {},
+      -- pyright = {},
+      -- rust_analyzer = {},
+      -- tsserver = {},
+      html = { filetypes = { 'html', 'mustache', 'handlebars' } },
+      htmx = { filetypes = { 'html', 'mustache', 'handlebars' } },
 
-  lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
+      lua_ls = {
+        Lua = {
+          workspace = { checkThirdParty = false },
+          telemetry = { enable = false },
+          -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+          -- diagnostics = { disable = { 'missing-fields' } },
+        },
+      },
+      basedpyright = {
+      },
+      ruff = {
+        keys = {
+          {
+            "<leader>co",
+            function()
+              vim.lsp.buf.code_action({
+                apply = true,
+                context = {
+                  only = { "source.organizeImports" },
+                  diagnostics = {},
+                },
+              })
+            end,
+            desc = "Organize Imports",
+          },
+        },
+      },
     },
-  },
-}
 
--- Setup neovim lua configuration
-require('neodev').setup()
+    -- Setup neovim lua configuration
+    require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
